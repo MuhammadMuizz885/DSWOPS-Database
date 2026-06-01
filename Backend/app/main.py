@@ -3,7 +3,7 @@ DocFlow SaaS — main.py R8
 CRITICAL: StaticFiles mount must be LAST.
 CRITICAL: CORS middleware must be added before routers.
 """
-import recreate_db
+
 import os
 import pytesseract
 from contextlib import asynccontextmanager
