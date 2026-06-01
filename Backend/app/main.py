@@ -6,10 +6,10 @@ def ensure_tesseract():
     import shutil
     if shutil.which("tesseract") is None:
         print("Tesseract not found — installing via apt...")
+        subprocess.run(["apt-get", "update", "-y"], check=True)
         subprocess.run(
             ["apt-get", "install", "-y", "tesseract-ocr", "tesseract-ocr-eng"],
-            check=True,
-            capture_output=False
+            check=True
         )
         print("Tesseract installed successfully.")
     else:
