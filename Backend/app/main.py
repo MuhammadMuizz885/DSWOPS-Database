@@ -13,7 +13,7 @@ def ensure_tesseract():
         )
         print("Tesseract installed successfully.")
     else:
-        print("Tesseract already available.")
+        print("Tesseract already present — skipping install.")
 
 ensure_tesseract()
 
