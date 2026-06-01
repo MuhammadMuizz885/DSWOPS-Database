@@ -6,6 +6,8 @@ import time
 import sys
 import os
 import pytesseract
+import logging
+logger = logging.getLogger(__name__)
 
 # Platform-aware Tesseract path
 if sys.platform.startswith("win"):
