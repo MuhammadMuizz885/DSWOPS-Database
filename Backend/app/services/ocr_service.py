@@ -4,12 +4,18 @@ from PIL import Image
 from app.config import settings
 import time
 import pytesseract
-
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
 import os
+# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
 
-os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
+import sys
+
+# ── Dynamic Tesseract Configuration ───────────────────
+if sys.platform.startswith("win"):
+    os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    pytesseract.pytesseract.tesseract_cmd = "tesseract"
 
 logger = logging.getLogger(__name__)
 
