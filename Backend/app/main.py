@@ -8,8 +8,25 @@ import os
 import pytesseract
 from contextlib import asynccontextmanager
 
-os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# --------------------------------------------------------------
+# os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
+# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+
+import sys
+
+# ── Dynamic Tesseract Configuration ───────────────────
+# If running on Windows (your local machine)
+if sys.platform.startswith("win"):
+    os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# If running on Linux (Railway production server)
+else:
+    # Linux automatically adds tesseract to the global PATH, 
+    # so we just point directly to the binary command.
+    pytesseract.pytesseract.tesseract_cmd = "tesseract"
+
+# ---------------------------------------------------------------
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse

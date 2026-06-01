@@ -5,12 +5,30 @@ Drops and recreates all tables. Seeds super admin + demo org.
 import os, sys, hashlib, secrets
 sys.path.insert(0, os.path.dirname(__file__))
 
-os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
-try:
-    import pytesseract
-    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-except Exception:
-    pass
+# ── OLD WINDOWS-ONLY CODE (COMMENTED OUT) ─────────────────
+# os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
+# try:
+#     import pytesseract
+#     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# except Exception:
+#     pass
+# ──────────────────────────────────────────────────────────
+
+# ── NEW DYNAMIC TESSERACT CONFIGURATION ──────────────────
+if sys.platform.startswith("win"):
+    os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
+    try:
+        import pytesseract
+        pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    except Exception:
+        pass
+else:
+    try:
+        import pytesseract
+        pytesseract.pytesseract.tesseract_cmd = "tesseract"
+    except Exception:
+        pass
+# ──────────────────────────────────────────────────────────
 
 from app.database import engine
 from app.models.database import Base, Organization, User, UploadRecord, Document, AuditLog, SystemSetting
