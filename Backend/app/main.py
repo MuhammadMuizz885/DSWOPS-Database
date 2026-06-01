@@ -3,7 +3,10 @@ DocFlow SaaS — main.py R8
 CRITICAL: StaticFiles mount must be LAST.
 CRITICAL: CORS middleware must be added before routers.
 """
-
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+from sqlalchemy import text
 import os
 import pytesseract
 from contextlib import asynccontextmanager
