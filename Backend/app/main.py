@@ -94,6 +94,48 @@ def health_check(db: Session = Depends(get_db)):
 
     return {"status": "ok", "db": db_status, "tesseract": tess_status}
 
+# debug tessearact -------------------------------------------
+
+@app.get("/debug-tesseract")
+def debug_tesseract():
+    import subprocess
+    import shutil
+    import os
+
+    results = {}
+
+    # 1. Is the binary findable?
+    results["which_tesseract"] = shutil.which("tesseract")
+
+    # 2. What does pytesseract think the cmd is?
+    import pytesseract
+    results["pytesseract_cmd"] = pytesseract.pytesseract.tesseract_cmd
+
+    # 3. Try running it directly
+    try:
+        r = subprocess.run(["tesseract", "--version"], capture_output=True, text=True, timeout=5)
+        results["tesseract_version"] = r.stdout + r.stderr
+        results["returncode"] = r.returncode
+    except FileNotFoundError:
+        results["tesseract_version"] = "FileNotFoundError — not in PATH"
+    except Exception as e:
+        results["tesseract_version"] = str(e)
+
+    # 4. What is the PATH?
+    results["PATH"] = os.environ.get("PATH", "not set")
+
+    # 5. Is tessdata present?
+    try:
+        r2 = subprocess.run(["find", "/usr", "-name", "eng.traineddata"], capture_output=True, text=True, timeout=5)
+        results["eng_traineddata"] = r2.stdout.strip() or "NOT FOUND"
+    except Exception as e:
+        results["eng_traineddata"] = str(e)
+
+    # 6. TESSDATA_PREFIX
+    results["TESSDATA_PREFIX"] = os.environ.get("TESSDATA_PREFIX", "not set")
+
+    return results
+
 # ── Exception handlers ─────────────────────────
 @app.exception_handler(500)
 def server_error(request: Request, exc):
