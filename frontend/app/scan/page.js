@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "../dashboard/page";
 
-const API = "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://dswops-production.up.railway.app";
 const getToken = () => localStorage.getItem("dswops_token") || "";
 const getUser  = () => { try { return JSON.parse(localStorage.getItem("dswops_user")); } catch { return null; } };
 
