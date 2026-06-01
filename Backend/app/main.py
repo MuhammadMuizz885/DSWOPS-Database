@@ -1,3 +1,23 @@
+import subprocess
+import sys
+import os
+
+def ensure_tesseract():
+    import shutil
+    if shutil.which("tesseract") is None:
+        print("Tesseract not found — installing via apt...")
+        subprocess.run(
+            ["apt-get", "install", "-y", "tesseract-ocr", "tesseract-ocr-eng"],
+            check=True,
+            capture_output=False
+        )
+        print("Tesseract installed successfully.")
+    else:
+        print("Tesseract already available.")
+
+ensure_tesseract()
+
+
 """
 DocFlow SaaS — main.py R8
 CRITICAL: StaticFiles mount must be LAST.
