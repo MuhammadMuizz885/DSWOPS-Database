@@ -70,15 +70,26 @@ app.include_router(routes.router, prefix="/api")
 
 # ── Health ─────────────────────────────────────
 @app.get("/health")
-def health():
-    from app.database import engine
-    from sqlalchemy import text
+def health_check(db: Session = Depends(get_db)):
+    import subprocess
     try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        return {"status": "ok", "db": "connected"}
+        db.execute(text("SELECT 1"))
+        db_status = "connected"
     except Exception as e:
-        return {"status": "error", "db": str(e)}
+        db_status = f"error: {str(e)}"
+
+    try:
+        result = subprocess.run(
+            ["tesseract", "--version"],
+            capture_output=True, text=True, timeout=5
+        )
+        tess_status = result.stdout.strip().split("\n")[0] if result.returncode == 0 else f"error: {result.stderr}"
+    except FileNotFoundError:
+        tess_status = "NOT FOUND in PATH"
+    except Exception as e:
+        tess_status = f"error: {str(e)}"
+
+    return {"status": "ok", "db": db_status, "tesseract": tess_status}
 
 # ── Exception handlers ─────────────────────────
 @app.exception_handler(500)

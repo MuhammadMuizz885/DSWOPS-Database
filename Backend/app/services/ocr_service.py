@@ -3,21 +3,18 @@ from typing import Tuple
 from PIL import Image
 from app.config import settings
 import time
-import pytesseract
-import os
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-# os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
-
 import sys
+import os
+import pytesseract
 
-# ── Dynamic Tesseract Configuration ───────────────────
+# Platform-aware Tesseract path
 if sys.platform.startswith("win"):
     os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR"
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 else:
-    pytesseract.pytesseract.tesseract_cmd = "tesseract"
-
-logger = logging.getLogger(__name__)
+    # Linux/Railway — use system tesseract
+    tesseract_cmd = os.environ.get("TESSERACT_CMD", "tesseract")
+    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
 
 class OCRService:
     """Handle OCR text extraction from images"""
