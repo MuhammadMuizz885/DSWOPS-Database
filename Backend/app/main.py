@@ -37,7 +37,10 @@ app = FastAPI(
 # ── CORS (must be before routers) ─────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+    "https://dswops.vercel.app",
+    "http://localhost:3000"  # keep for local dev 
+                ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*", "X-Auth-Token"],
