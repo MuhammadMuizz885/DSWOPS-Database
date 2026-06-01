@@ -1,0 +1,27 @@
+# ===== BACKEND (Python/FastAPI) =====
+Backend/.env
+Backend/__pycache__/
+Backend/**/__pycache__/
+Backend/*.pyc
+Backend/.venv/
+Backend/venv/
+
+# ===== FRONTEND (Next.js) =====
+frontend/.env
+frontend/.env.local
+frontend/.env*.local
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# ===== DATABASE =====
+Database/*.sql
+Database/*.sqlite
+Database/.env
+
+# ===== GENERAL =====
+.env
+.env.local
+*.pem
+.DS_Store
