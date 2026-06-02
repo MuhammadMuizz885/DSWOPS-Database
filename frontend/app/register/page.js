@@ -50,61 +50,59 @@ export default function RegisterPage() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    if (form.password !== form.confirm_password) {
-      setError("Passwords do not match.");
-      return;
-    }
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-    if (!form.slug) {
-      setError("Office ID (slug) is required.");
-      return;
-    }
+  if (form.password !== form.confirm_password) {
+    setError("Passwords do not match.");
+    return;
+  }
+  if (form.password.length < 6) {
+    setError("Password must be at least 6 characters.");
+    return;
+  }
+  if (!form.slug) {
+    setError("Office ID (slug) is required.");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-                org_name: form.org_name,
-                slug: form.slug,
-                admin_username: form.username,
-                admin_password: form.password,
-                admin_display_name: form.display_name || form.username,
-            }),
+  setLoading(true);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {  // ← FIXED
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        org_name:           form.org_name,
+        slug:               form.slug,
+        admin_username:     form.username,
+        admin_password:     form.password,
+        admin_display_name: form.display_name || form.username,
+      }),
     });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.detail || "Registration failed. Please try again.");
-        return;
-      }
+    if (!res.ok) {
+      setError(data.detail || "Registration failed. Please try again.");
+      return;
+    }
 
-      // Store auth — same keys as login page
-      localStorage.setItem("dswops_token", data.token);
-      localStorage.setItem(
-        "dswops_user",
-        JSON.stringify({
-          username: form.username,
-          role: "admin",
-          org_id: data.org_id,
-          org_name: form.org_name,
-          plan: "free",
-        })
-      );
+    localStorage.setItem("dswops_token", data.token);
+    localStorage.setItem("dswops_user", JSON.stringify({  // ← FIXED: use server response
+      username:     form.username,
+      role:         data.role,
+      display_name: data.display_name,
+      org_id:       data.org_id,
+      org_name:     data.org_name,
+      org_slug:     data.org_slug,
+      plan:         data.plan,
+    }));
 
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Cannot connect to server. Is the backend running?");
-    } finally {
-      setLoading(false);
+    router.push("/dashboard");
+  } catch (err) {
+    setError("Cannot connect to server. Is the backend running?");
+  } finally {
+    setLoading(false);
     }
   }
 
